@@ -1,18 +1,16 @@
+import { MongooseModule } from '@nestjs/mongoose';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
+import { UsersModule } from './users/users.module';
 import { AppService } from './app.service';
-import { GiftsController } from './gifts/gitfs.controller';
-import { NotificationsController } from './notifications/notifications.controller';
-import { UsersController } from './users/users.controller';
+
+const { MONGODB_URL } = process.env;
+
+console.log(process.env.MONGODB_URL);
 
 @Module({
-  imports: [],
-  controllers: [
-    AppController,
-    UsersController,
-    GiftsController,
-    NotificationsController,
-  ],
+  imports: [UsersModule, MongooseModule.forRoot(MONGODB_URL)],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
