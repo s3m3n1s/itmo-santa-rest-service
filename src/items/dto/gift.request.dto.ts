@@ -1,20 +1,21 @@
+import { Optional } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
+import { IsOptional } from 'class-validator';
+
+enum giftStatus {
+  'pending',
+  'delivered',
+  'received',
+}
 
 export class GiftDTO {
-  @Expose()
   @ApiProperty()
   receiverId: string;
 
-  @Expose()
   @ApiProperty()
   creatorId: string;
 
-  @Expose()
-  @ApiProperty()
+  @ApiProperty({ required: false, enum: giftStatus })
   status: string;
-
-  @Expose()
-  @ApiProperty()
-  giftCode: number;
 }

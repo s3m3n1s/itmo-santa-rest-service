@@ -35,18 +35,18 @@ export class GiftsController {
     return await this.giftsService.createGift(gift);
   }
 
-  @Get('get/:id')
+  @Get('get/:property/:value')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get gift' })
-  @ApiForbiddenResponse({ description: 'Incorrect gift id' })
+  @ApiOperation({ summary: 'Get gift by property with value' })
+  @ApiForbiddenResponse({ description: 'Incorrect input data' })
   @ApiCreatedResponse({
-    description: 'gift was created',
+    description: 'Gift information was received',
   })
-  @ApiCreatedResponse({
-    description: 'Gets gifts by provided query',
-  })
-  async getGifts(@Param('id') id: string) {
-    return await this.giftsService.getGift(id);
+  async getGift(
+    @Param('property') property: string,
+    @Param('value') value: string,
+  ) {
+    return await this.giftsService.getGift(property, value);
   }
 
   @Patch('update/:id')

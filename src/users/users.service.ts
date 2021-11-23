@@ -11,7 +11,7 @@ export class UsersService {
   ) {}
 
   async createUser(user: UserDTO) {
-    if (this.isUsernameWasTaken(user.username)) {
+    if (await this.isUsernameWasTaken(user.username)) {
       throw new ConflictException({
         description: 'Имя пользователя уже занято',
       });
@@ -30,7 +30,7 @@ export class UsersService {
 
   async isUsernameWasTaken(username: string) {
     const user = await this.getUserByUsername(username);
-    return !Boolean(user.length);
+    return Boolean(user.length);
   }
 
   async updateUser(id: string, update): Promise<ICommonUser> {
