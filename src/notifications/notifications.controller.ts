@@ -2,6 +2,8 @@ import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiForbiddenResponse,
+  ApiFoundResponse,
+  ApiNotFoundResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
@@ -17,7 +19,7 @@ export class NotificationsController {
   @Post('send')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Send notification' })
-  @ApiForbiddenResponse({ description: 'Some params invalid' })
+  @ApiForbiddenResponse({ description: 'Some params are invalid' })
   async sendNotification(
     @Query() notification: NotificationDTO,
   ): Promise<ICommonNotification> {
@@ -27,7 +29,11 @@ export class NotificationsController {
   @Get('get/:userId')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get notifications for user' })
-  @ApiForbiddenResponse({ description: 'User id is invalid' })
+  @ApiNotFoundResponse({ description: 'There is no such notification entity' })
+  @ApiFoundResponse({
+    type: NotificationDTO,
+    description: 'Notification was found',
+  })
   async getNotifications(
     @Param('userId') userId: string,
   ): Promise<ICommonNotification[]> {

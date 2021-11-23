@@ -12,6 +12,8 @@ import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiForbiddenResponse,
+  ApiFoundResponse,
+  ApiNotFoundResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
@@ -39,6 +41,11 @@ export class GiftsController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get gift by property with value' })
   @ApiForbiddenResponse({ description: 'Incorrect input data' })
+  @ApiFoundResponse({
+    type: GiftDTO,
+    description: 'Gift was found',
+  })
+  @ApiNotFoundResponse({ description: 'There is no such gift entity' })
   @ApiCreatedResponse({
     description: 'Gift information was received',
   })
@@ -53,6 +60,7 @@ export class GiftsController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update gift information' })
   @ApiForbiddenResponse({ description: 'Some params invalid' })
+  @ApiNotFoundResponse({ description: 'There is no such gift entity' })
   @ApiCreatedResponse({
     description: 'Updates gift`s property',
   })
@@ -69,6 +77,7 @@ export class GiftsController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Remove gift' })
   @ApiForbiddenResponse({ description: 'Incorrect gift id' })
+  @ApiNotFoundResponse({ description: 'There is no such gift entity' })
   @ApiCreatedResponse({
     description: 'Removes gift',
   })

@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserDTO } from 'src/items/dto/user.request.dto';
@@ -21,7 +25,13 @@ export class UsersService {
   }
 
   async getUserById(id: string) {
-    return this.userModel.find({ _id: id });
+    const result = await this.userModel.find({ _id: id });
+
+    if (!result.length) {
+      throw new NotFoundException({ message: 'Данный пользователь не найден' });
+    }
+
+    return result;
   }
 
   async getUserByUsername(username: string) {
@@ -34,12 +44,32 @@ export class UsersService {
   }
 
   async updateUser(id: string, update): Promise<ICommonUser> {
-    return await this.userModel.findByIdAndUpdate({ _id: id }, update, {
+    const result = await this.userModel.findByIdAndUpdate({ _id: id }, update, {
       lean: true,
     });
+
+    if (!result) {
+      throw new NotFoundException({ message: 'Данный пользователь не найден' });
+    }
+
+    return result;
   }
 
   async removeUser(id: string): Promise<ICommonUser> {
-    return await this.userModel.findOneAndDelete({ _id: id });
+    let result: ICommonUser;
+    try {
+      result = await this.userModel.findOneAndDelete({ _id: id });
+    } catch (err) {
+      console.log(err);
+      throw new ConflictException({
+        description: 'Ошибка базы данных. Скорее всего id задан неверно.',
+      });
+    }
+
+    if (!result) {
+      throw new NotFoundException({ message: 'Данный пользователь не найден' });
+    }
+
+    return result;
   }
 }

@@ -8,8 +8,6 @@ import { NotificationsModule } from './notifications/notifications.module';
 
 const { MONGODB_URL } = process.env;
 
-console.log(process.env.MONGODB_URL);
-
 @Module({
   imports: [
     UsersModule,

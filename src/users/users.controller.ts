@@ -11,6 +11,7 @@ import {
   ApiBearerAuth,
   ApiForbiddenResponse,
   ApiFoundResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -43,6 +44,7 @@ export class UsersController {
     type: UserDTO,
     description: 'User was found',
   })
+  @ApiNotFoundResponse({ description: 'There is no such user entity' })
   @ApiForbiddenResponse({ description: 'Incorrect user id' })
   async getUsers(@Param('id') id: string) {
     return await this.usersService.getUserById(id);
@@ -54,6 +56,7 @@ export class UsersController {
   @ApiOkResponse({
     description: 'User was updated',
   })
+  @ApiNotFoundResponse({ description: 'There is no such user entity' })
   @ApiForbiddenResponse({ description: 'Incorrect user id' })
   async updateUser(
     @Param('id') id: string,
@@ -65,6 +68,7 @@ export class UsersController {
   @Delete('remove/:id')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Remove user' })
+  @ApiNotFoundResponse({ description: 'There is no such user entity' })
   @ApiForbiddenResponse({ description: 'Incorrect user id' })
   @ApiOkResponse({
     description: 'User was deleted succesfully',
