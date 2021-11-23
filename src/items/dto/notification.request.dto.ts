@@ -1,12 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
+import { notificationType } from 'src/const/api';
 
-enum notificationType {
-  'GIFT_STATUS_CHANGED',
-  'ALERT',
-  'NEWS',
-  'THANK_SANTA',
-}
 export class NotificationDTO {
   @ApiProperty()
   receiverId: string;

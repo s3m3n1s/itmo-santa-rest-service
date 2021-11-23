@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { MAX_USERS_PER_REQUEST } from 'src/const/api';
 import { UserDTO } from 'src/items/dto/user.request.dto';
 import { ICommonUser } from 'src/items/interfaces/CommonUser';
 
@@ -22,6 +23,29 @@ export class UsersService {
     }
     const newUser = new this.userModel(user);
     return await newUser.save();
+  }
+
+  async getUsers(limit = MAX_USERS_PER_REQUEST, offset?: number) {
+    const result = await this.userModel.find().skip(offset).limit(limit).exec();
+
+    return {
+      users: result,
+      count: await this.userModel.countDocuments().exec(),
+    };
+  }
+
+  async getUser(property: string, value: string) {
+    if (property === 'id') {
+      property = '_id';
+    }
+
+    const result = await this.userModel.find({ [property]: value });
+
+    if (!result) {
+      throw new NotFoundException({ message: 'Пользователь не найден' });
+    }
+
+    return result;
   }
 
   async getUserById(id: string) {

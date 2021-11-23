@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Delete,
   Get,
@@ -17,7 +16,9 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { MAX_GIFTS_PER_REQUEST } from 'src/const/api';
 import { GiftDTO } from 'src/items/dto/gift.request.dto';
+import { MultipleEntities } from 'src/items/dto/multipleEntities.request.dto';
 import { ICommonGift } from 'src/items/interfaces/CommonGift';
 import { GiftsService } from './gitfs.service';
 
@@ -37,7 +38,27 @@ export class GiftsController {
     return await this.giftsService.createGift(gift);
   }
 
-  @Get('get/:property/:value')
+  @Get('get/:limit/:offset')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get all gifts' })
+  @ApiFoundResponse({
+    description: 'Gifts were found',
+  })
+  async getGifts(@Query() data: MultipleEntities) {
+    if (!data.limit) {
+      data.limit = MAX_GIFTS_PER_REQUEST;
+    }
+    if (!data.offset) {
+      data.offset = 0;
+    }
+
+    return await this.giftsService.getGifts(
+      Number(data.limit),
+      Number(data.offset),
+    );
+  }
+
+  @Get('getBy/:property/:value')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get gift by property with value' })
   @ApiForbiddenResponse({ description: 'Incorrect input data' })

@@ -1,14 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-
-enum userFaculty {
-  'МФ КТИУ',
-  'МФ ТИНТ',
-  'ФТМФ',
-  'МФ НЖ',
-  'МФ БТИНС',
-  'ФТМИИ',
-}
+import { userFaculty } from 'src/const/api';
 
 export class UserDTO {
   @Expose()

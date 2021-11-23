@@ -1,13 +1,5 @@
-import { Optional } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
-import { IsOptional } from 'class-validator';
-
-enum giftStatus {
-  'pending',
-  'delivered',
-  'received',
-}
+import { giftStatus } from 'src/const/api';
 
 export class GiftDTO {
   @ApiProperty()

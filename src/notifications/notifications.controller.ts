@@ -7,6 +7,8 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { MAX_NOTIFICATIONS_PER_REQUEST } from 'src/const/api';
+import { MultipleEntities } from 'src/items/dto/multipleEntities.request.dto';
 import { NotificationDTO } from 'src/items/dto/notification.request.dto';
 import { ICommonNotification } from 'src/items/interfaces/CommonNotification';
 import { NotificationService } from './notifications.service';
@@ -26,19 +28,38 @@ export class NotificationsController {
     return await this.notificationService.sendNotification(notification);
   }
 
-  @Get('get/:userId')
+  @Get('get/:limit/:offset')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get notifications for user' })
-  @ApiNotFoundResponse({ description: 'There is no such notification entity' })
+  @ApiOperation({ summary: 'Get all notifications' })
+  @ApiFoundResponse({
+    description: 'Notifications were found',
+  })
+  async getUsers(@Query() data: MultipleEntities) {
+    if (!data.limit) {
+      data.limit = MAX_NOTIFICATIONS_PER_REQUEST;
+    }
+    if (!data.offset) {
+      data.offset = 0;
+    }
+
+    return await this.notificationService.getNotifications(
+      Number(data.limit),
+      Number(data.offset),
+    );
+  }
+
+  @Get('getBy/:property/:value')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get notifications by property with value' })
+  @ApiForbiddenResponse({ description: 'Incorrect input data' })
   @ApiFoundResponse({
     type: NotificationDTO,
-    description: 'Notification was found',
+    description: 'Notifications were found',
   })
-  async getNotifications(
-    @Param('userId') userId: string,
-  ): Promise<ICommonNotification[]> {
-    const notifications =
-      await this.notificationService.getNotificationsByUserId(userId);
-    return notifications;
+  async getNotification(
+    @Param('property') property: string,
+    @Param('value') value: string,
+  ) {
+    return await this.notificationService.getNotification(property, value);
   }
 }

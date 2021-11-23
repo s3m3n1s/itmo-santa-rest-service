@@ -16,6 +16,8 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { MAX_USERS_PER_REQUEST } from 'src/const/api';
+import { MultipleEntities } from 'src/items/dto/multipleEntities.request.dto';
 import { UserDTO } from 'src/items/dto/user.request.dto';
 import { ICommonUser } from 'src/items/interfaces/CommonUser';
 import { UsersService } from './users.service';
@@ -37,17 +39,40 @@ export class UsersController {
     return id;
   }
 
-  @Get('get/:id')
+  @Get('get/:limit/:offset')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get user' })
+  @ApiOperation({ summary: 'Get all users' })
+  @ApiFoundResponse({
+    description: 'Users was found',
+  })
+  async getUsers(@Query() data: MultipleEntities) {
+    if (!data.limit) {
+      data.limit = MAX_USERS_PER_REQUEST;
+    }
+    if (!data.offset) {
+      data.offset = 0;
+    }
+
+    return await this.usersService.getUsers(
+      Number(data.limit),
+      Number(data.offset),
+    );
+  }
+
+  @Get('getBy/:property/:value')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get users by property with value' })
+  @ApiForbiddenResponse({ description: 'Incorrect input data' })
   @ApiFoundResponse({
     type: UserDTO,
-    description: 'User was found',
+    description: 'Users was found',
   })
   @ApiNotFoundResponse({ description: 'There is no such user entity' })
-  @ApiForbiddenResponse({ description: 'Incorrect user id' })
-  async getUsers(@Param('id') id: string) {
-    return await this.usersService.getUserById(id);
+  async getUser(
+    @Param('property') property: string,
+    @Param('value') value: string,
+  ) {
+    return await this.usersService.getUser(property, value);
   }
 
   @Patch('update/:id')
