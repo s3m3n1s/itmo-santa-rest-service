@@ -1,9 +1,12 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional } from 'class-validator';
 
 export class MultipleEntities {
-  @ApiProperty({ required: false })
+  @IsOptional()
+  @ApiPropertyOptional()
   limit: number;
 
-  @ApiProperty({ required: false })
+  @IsOptional()
+  @ApiPropertyOptional()
   offset: number;
 }

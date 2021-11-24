@@ -38,24 +38,14 @@ export class GiftsController {
     return await this.giftsService.createGift(gift);
   }
 
-  @Get('get/:limit/:offset')
+  @Get('/')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all gifts' })
   @ApiFoundResponse({
     description: 'Gifts were found',
   })
   async getGifts(@Query() data: MultipleEntities) {
-    if (!data.limit) {
-      data.limit = MAX_GIFTS_PER_REQUEST;
-    }
-    if (!data.offset) {
-      data.offset = 0;
-    }
-
-    return await this.giftsService.getGifts(
-      Number(data.limit),
-      Number(data.offset),
-    );
+    return await this.giftsService.getGifts(data.limit, data.offset);
   }
 
   @Get('getBy/:property/:value')

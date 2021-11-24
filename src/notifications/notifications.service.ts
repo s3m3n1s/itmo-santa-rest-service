@@ -2,12 +2,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { MAX_NOTIFICATIONS_PER_REQUEST } from 'src/const/api';
 import { NotificationDTO } from 'src/items/dto/notification.request.dto';
-import { CommonNotification } from 'src/items/model/notification.model';
+import { ICommonNotification } from 'src/items/interfaces/CommonNotification';
 
 export class NotificationService {
   constructor(
     @InjectModel('Notification')
-    private readonly notificationModel: Model<CommonNotification>,
+    private readonly notificationModel: Model<ICommonNotification>,
   ) {}
 
   async sendNotification(notification: NotificationDTO) {
@@ -19,8 +19,8 @@ export class NotificationService {
   async getNotifications(limit = MAX_NOTIFICATIONS_PER_REQUEST, offset = 0) {
     const result = await this.notificationModel
       .find()
-      .skip(offset)
-      .limit(limit)
+      .skip(Number(offset))
+      .limit(Number(limit))
       .exec();
 
     return {

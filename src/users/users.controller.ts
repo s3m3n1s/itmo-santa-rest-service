@@ -39,24 +39,24 @@ export class UsersController {
     return id;
   }
 
-  @Get('get/:limit/:offset')
+  @Get('/')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all users' })
   @ApiFoundResponse({
     description: 'Users was found',
   })
   async getUsers(@Query() data: MultipleEntities) {
-    if (!data.limit) {
-      data.limit = MAX_USERS_PER_REQUEST;
-    }
-    if (!data.offset) {
-      data.offset = 0;
-    }
+    return await this.usersService.getUsers(data.limit, data.offset);
+  }
 
-    return await this.usersService.getUsers(
-      Number(data.limit),
-      Number(data.offset),
-    );
+  @Get('id/:id')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get all users' })
+  @ApiFoundResponse({
+    description: 'User was retrieved',
+  })
+  async getUserById(@Param('id') id: string) {
+    return await this.usersService.getUserById(id);
   }
 
   @Get('getBy/:property/:value')

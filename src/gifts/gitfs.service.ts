@@ -27,7 +27,11 @@ export class GiftsService {
   }
 
   async getGifts(limit = MAX_GIFTS_PER_REQUEST, offset = 0) {
-    const result = await this.giftModel.find().skip(offset).limit(limit).exec();
+    const result = await this.giftModel
+      .find()
+      .skip(Number(offset))
+      .limit(Number(limit))
+      .exec();
 
     return {
       users: result,
