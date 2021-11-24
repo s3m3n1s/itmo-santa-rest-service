@@ -16,7 +16,6 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { MAX_USERS_PER_REQUEST } from 'src/const/api';
 import { MultipleEntities } from 'src/items/dto/multipleEntities.request.dto';
 import { UserDTO } from 'src/items/dto/user.request.dto';
 import { ICommonUser } from 'src/items/interfaces/CommonUser';

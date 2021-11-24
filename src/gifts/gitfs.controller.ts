@@ -16,7 +16,6 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { MAX_GIFTS_PER_REQUEST } from 'src/const/api';
 import { GiftDTO } from 'src/items/dto/gift.request.dto';
 import { MultipleEntities } from 'src/items/dto/multipleEntities.request.dto';
 import { ICommonGift } from 'src/items/interfaces/CommonGift';

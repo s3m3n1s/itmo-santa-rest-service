@@ -1,15 +1,12 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiForbiddenResponse,
   ApiFoundResponse,
-  ApiInternalServerErrorResponse,
-  ApiNotFoundResponse,
   ApiOperation,
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
-import { MAX_NOTIFICATIONS_PER_REQUEST } from 'src/const/api';
 import { MultipleEntities } from 'src/items/dto/multipleEntities.request.dto';
 import { NotificationDTO } from 'src/items/dto/notification.request.dto';
 import { ICommonNotification } from 'src/items/interfaces/CommonNotification';
