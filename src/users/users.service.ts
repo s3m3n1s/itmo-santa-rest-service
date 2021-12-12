@@ -77,7 +77,7 @@ export class UsersService {
   }
 
   async updateUser(id: string, update): Promise<ICommonUser> {
-    const result = await this.userModel.findByIdAndUpdate({ _id: id }, update, {
+    const result = await this.userModel.findOneAndUpdate({ tgId: id }, update, {
       lean: true,
     });
 
@@ -86,6 +86,16 @@ export class UsersService {
     }
 
     return result;
+  }
+
+  async linkUser(token: string, tgId: string) {
+    return this.userModel.findOneAndUpdate(
+      { token },
+      { tgId },
+      {
+        lean: true,
+      },
+    );
   }
 
   async removeUser(id: string): Promise<ICommonUser> {

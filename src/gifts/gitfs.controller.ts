@@ -6,6 +6,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -16,15 +17,21 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { TelegramElfGuard } from 'src/common/TelegramElfGuard';
 import { GiftDTO } from 'src/items/dto/gift.request.dto';
 import { MultipleEntities } from 'src/items/dto/multipleEntities.request.dto';
 import { ICommonGift } from 'src/items/interfaces/CommonGift';
+import { NotificationService } from 'src/notifications/notifications.service';
 import { GiftsService } from './gitfs.service';
 
 @ApiTags('gifts')
 @Controller('gifts')
+// @UseGuards(TelegramElfGuard)
 export class GiftsController {
-  constructor(private readonly giftsService: GiftsService) {}
+  constructor(
+    private readonly giftsService: GiftsService,
+    private readonly notificationService: NotificationService,
+  ) {}
 
   @Post('create')
   @ApiBearerAuth()
@@ -33,8 +40,16 @@ export class GiftsController {
   @ApiCreatedResponse({
     description: 'gift was created',
   })
-  async createGift(@Query() gift: GiftDTO): Promise<string> {
-    return await this.giftsService.createGift(gift);
+  async createGift(@Query() gift: GiftDTO): Promise<ICommonGift> {
+    const res = await this.giftsService.createGift(gift);
+    const notification = {
+      receiverId: gift.creatorId,
+      message: 'Можно идти за подарком',
+      title: 'Получатель подарка определён!',
+      type: 'GIFT_STATUS_CHANGED',
+    };
+    //await this.notificationService.sendNotification(notification);
+    return res;
   }
 
   @Get('/')
@@ -78,8 +93,6 @@ export class GiftsController {
     @Param('id') id: string,
     @Query() data: GiftDTO,
   ): Promise<ICommonGift> {
-    console.log(id);
-
     return await this.giftsService.updateGift(id, data);
   }
 
@@ -93,5 +106,16 @@ export class GiftsController {
   })
   async removeGift(@Param('id') id: string): Promise<ICommonGift> {
     return await this.giftsService.removeGift(id);
+  }
+
+  @UseGuards(TelegramElfGuard)
+  @Patch('updateByCode/:giftCode/:status')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update gift status' })
+  async updateGiftByCode(
+    @Param('giftCode') giftCode: number,
+    @Param('status') status: string,
+  ) {
+    return await this.giftsService.updateGiftByCode(giftCode, status);
   }
 }

@@ -23,3 +23,16 @@ export enum userFaculty {
   'МФ БТИНС',
   'ФТМИИ',
 }
+
+export enum userRoles {
+  'user',
+  'elf',
+  'admin',
+}
+
+export enum botEvents {
+  'REGISTRATION',
+  'USER_PROFILE',
+  'RECEIVER_ATTACHED',
+  'GIFT_DELIVERED',
+}

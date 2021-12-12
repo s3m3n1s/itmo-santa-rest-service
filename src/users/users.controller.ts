@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -6,6 +7,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -16,6 +18,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { TelegramUserGuard } from 'src/common/TelegramUserGuard';
 import { MultipleEntities } from 'src/items/dto/multipleEntities.request.dto';
 import { UserDTO } from 'src/items/dto/user.request.dto';
 import { ICommonUser } from 'src/items/interfaces/CommonUser';
@@ -23,6 +26,7 @@ import { UsersService } from './users.service';
 
 @ApiTags('users')
 @Controller('users')
+//@UseGuards(TelegramUserGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -84,9 +88,28 @@ export class UsersController {
   @ApiForbiddenResponse({ description: 'Incorrect user id' })
   async updateUser(
     @Param('id') id: string,
-    @Query() data: UserDTO,
+    @Body() data: UserDTO,
   ): Promise<ICommonUser> {
+    console.log(id, data);
+
     return await this.usersService.updateUser(id, data);
+  }
+
+  @Patch('link/:token/:tgId')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update user' })
+  @ApiOkResponse({
+    description: 'User was updated',
+  })
+  @ApiNotFoundResponse({ description: 'There is no such user entity' })
+  @ApiForbiddenResponse({ description: 'Incorrect user id' })
+  async linkUser(
+    @Param('token') token: string,
+    @Param('tgId') tgId: string,
+  ): Promise<ICommonUser> {
+    console.log(token, tgId);
+
+    return await this.usersService.linkUser(token, tgId);
   }
 
   @Delete('remove/:id')
