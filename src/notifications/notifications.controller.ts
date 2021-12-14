@@ -1,12 +1,23 @@
-import { Controller, Post } from '@nestjs/common';
-import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Post, Query } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from '@nestjs/swagger';
+import { NotificationDTO } from 'src/items/dto/notification.request.dto';
+import { NotificationService } from './notifications.service';
 
 @ApiTags('notifications')
 @Controller('notifications')
 export class NotificationsController {
-  @ApiCreatedResponse({
-    description: 'Send a notification to the provided user',
-  })
-  @Post('notify')
-  notifyUser() {}
+  constructor(private readonly notificationService: NotificationService) {}
+
+  @Post('send')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Send notification' })
+  @ApiUnprocessableEntityResponse({ description: 'Validation errors' })
+  async sendNotification(@Query() notification: NotificationDTO) {
+    return await this.notificationService.sendNotification(notification);
+  }
 }
