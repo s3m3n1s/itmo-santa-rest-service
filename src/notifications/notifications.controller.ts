@@ -6,7 +6,6 @@ import {
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { NotificationDTO } from 'src/items/dto/notification.request.dto';
-import { ICommonNotification } from 'src/items/interfaces/CommonNotification';
 import { NotificationService } from './notifications.service';
 
 @ApiTags('notifications')
@@ -18,9 +17,7 @@ export class NotificationsController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Send notification' })
   @ApiUnprocessableEntityResponse({ description: 'Validation errors' })
-  async sendNotification(
-    @Query() notification: NotificationDTO,
-  ): Promise<ICommonNotification | string> {
+  async sendNotification(@Query() notification: NotificationDTO) {
     return await this.notificationService.sendNotification(notification);
   }
 }

@@ -1,17 +1,46 @@
 import axios from 'axios';
-import { NotificationDTO } from 'src/items/dto/notification.request.dto';
 
 export class NotificationService {
-  async sendNotification(notification: NotificationDTO) {
+  async sendNotification({
+    receiverId,
+    event,
+  }: {
+    receiverId: string;
+    event: string;
+  }) {
     try {
-      await axios.post(
-        `${process.env.TELEGRAM_BOT_REST_URL}/notifications/${
-          notification.event || 'send'
-        }`,
-        notification,
+      const res = await axios.post(
+        `${process.env.TELEGRAM_BOT_REST_URL}/notifications/${event || 'send'}`,
+        { receiverId },
       );
 
-      return notification;
+      return res.data;
+    } catch (err) {
+      console.log(err);
+      return err.response?.data;
+    }
+  }
+
+  async sendPairNotification({
+    receiverId,
+    creatorId,
+    event,
+  }: {
+    receiverId: string;
+    creatorId: string;
+    event: string;
+  }) {
+    try {
+      await axios.post(
+        `${process.env.TELEGRAM_BOT_REST_URL}/notifications/${event || 'send'}`,
+        { receiverId: creatorId },
+      );
+      const res = await axios.post(
+        `${process.env.TELEGRAM_BOT_REST_URL}/notifications/${event || 'send'}`,
+        { receiverId },
+      );
+
+      return res.data;
     } catch (err) {
       console.log(err);
       return err.response?.data;

@@ -1,15 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
-export class UserDTO {
-  @Expose()
-  @ApiProperty({ required: true })
-  tg_id: string;
-
-  @Expose()
-  @ApiProperty({ required: true })
-  isu: string;
-
+export class UserUpdateDTO {
   @Expose()
   @ApiProperty({ required: false })
   tg_username: string;
@@ -25,6 +17,10 @@ export class UserDTO {
   @Expose()
   @ApiProperty({ required: false })
   bio: string;
+
+  @Expose()
+  @ApiProperty({ required: false })
+  letter: string;
 
   @Expose()
   @ApiProperty({ required: false })

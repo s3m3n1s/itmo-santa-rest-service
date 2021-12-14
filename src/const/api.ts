@@ -3,9 +3,9 @@ export const MAX_GIFTS_PER_REQUEST = 10;
 export const MAX_NOTIFICATIONS_PER_REQUEST = 10;
 
 export enum giftStatus {
-  'НЕ ДОСТАВЛЕН',
-  'ДОСТАВЛЕНО',
-  'ВЫДАНО',
+  'PENDING',
+  'DELIVERED',
+  'RECEIVED',
 }
 
 export enum notificationType {
@@ -32,7 +32,8 @@ export enum userRoles {
 
 export enum botEvents {
   'REGISTRATION',
-  'USER_PROFILE',
   'RECEIVER_ATTACHED',
   'GIFT_DELIVERED',
+  'GIFT_RECEIVED',
+  'MY_GIFT_RECEIVED',
 }

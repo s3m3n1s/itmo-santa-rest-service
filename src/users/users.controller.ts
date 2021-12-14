@@ -18,9 +18,11 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import axios from 'axios';
 import { TelegramUserGuard } from 'src/common/TelegramUserGuard';
 import { MultipleEntities } from 'src/items/dto/multipleEntities.request.dto';
 import { UserDTO } from 'src/items/dto/user.request.dto';
+import { UserUpdateDTO } from 'src/items/dto/user.update.dto';
 import { ICommonUser } from 'src/items/interfaces/CommonUser';
 import { UsersService } from './users.service';
 
@@ -30,47 +32,24 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  // create user
   @Post('create')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Create user' })
-  @ApiOkResponse({
-    description: 'User was created succesfully',
-  })
-  @ApiForbiddenResponse({ description: 'Incorrect params' })
   async createUser(@Query() user: UserDTO) {
     const id = await this.usersService.createUser(user);
     return id;
   }
 
+  // get all users
   @Get('/')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get all users' })
-  @ApiFoundResponse({
-    description: 'Users was found',
-  })
   async getUsers(@Query() data: MultipleEntities) {
     return await this.usersService.getUsers(data.limit, data.offset);
   }
 
-  @Get('id/:id')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get all users' })
-  @ApiFoundResponse({
-    description: 'User was retrieved',
-  })
-  async getUserById(@Param('id') id: string) {
-    return await this.usersService.getUserById(id);
-  }
-
+  // get users with the same properties value
   @Get('getBy/:property/:value')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get users by property with value' })
-  @ApiForbiddenResponse({ description: 'Incorrect input data' })
-  @ApiFoundResponse({
-    type: UserDTO,
-    description: 'Users was found',
-  })
-  @ApiNotFoundResponse({ description: 'There is no such user entity' })
   async getUser(
     @Param('property') property: string,
     @Param('value') value: string,
@@ -78,49 +57,37 @@ export class UsersController {
     return await this.usersService.getUser(property, value);
   }
 
-  @Patch('update/:id')
+  // get user by tg id
+  @Get('get/:tg_id/')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update user' })
-  @ApiOkResponse({
-    description: 'User was updated',
-  })
-  @ApiNotFoundResponse({ description: 'There is no such user entity' })
-  @ApiForbiddenResponse({ description: 'Incorrect user id' })
-  async updateUser(
-    @Param('id') id: string,
-    @Body() data: UserDTO,
-  ): Promise<ICommonUser> {
-    console.log(id, data);
+  async getUserByTg(@Param('tg_id') value: string) {
+    return await this.usersService.getUser('tg_id', value);
+  }
 
+  // updating user bio
+  @Patch('update/:tg_id')
+  @ApiBearerAuth()
+  async updateUser(
+    @Param('tg_id') id: string,
+    @Body() data: UserUpdateDTO,
+  ): Promise<ICommonUser> {
     return await this.usersService.updateUser(id, data);
   }
 
-  @Patch('link/:token/:tgId')
+  // auth user isu
+  @Get('auth/:tg_id')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update user' })
-  @ApiOkResponse({
-    description: 'User was updated',
-  })
-  @ApiNotFoundResponse({ description: 'There is no such user entity' })
-  @ApiForbiddenResponse({ description: 'Incorrect user id' })
-  async linkUser(
-    @Param('token') token: string,
-    @Param('tgId') tgId: string,
-  ): Promise<ICommonUser> {
-    console.log(token, tgId);
-
-    return await this.usersService.linkUser(token, tgId);
+  async authUser(@Param('tg_id') id: string): Promise<boolean> {
+    await axios.post(
+      `${process.env.TELEGRAM_BOT_REST_URL}/notifications/registration`,
+      { receiverId: id },
+    );
+    return true;
   }
 
-  @Delete('remove/:id')
+  @Delete('remove/:tg_id')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Remove user' })
-  @ApiNotFoundResponse({ description: 'There is no such user entity' })
-  @ApiForbiddenResponse({ description: 'Incorrect user id' })
-  @ApiOkResponse({
-    description: 'User was deleted succesfully',
-  })
-  async removeUser(@Param('id') id: string): Promise<ICommonUser> {
+  async removeUser(@Param('tg_id') id: string): Promise<ICommonUser> {
     return await this.usersService.removeUser(id);
   }
 }
